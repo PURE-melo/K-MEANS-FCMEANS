@@ -1,0 +1,19 @@
+function [M,label]=my_kmeans(data,N)
+n=size(data,1);
+rk=randperm(n);
+N=rk(1:N);
+M=data(N,:);
+label=zeros(n,1);
+while 1
+oldlabel=label;
+Dist=pdist2(data,M);
+[~,label]=min(Dist,[],2);
+for i=1:N
+id=find(label==i);
+M(i,:)=mean(data(id,:));
+end
+if oldlabel==label
+   break
+end
+end
+end
