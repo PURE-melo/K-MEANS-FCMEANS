@@ -1,0 +1,32 @@
+%function [M,label]=my_FCM(data,N)
+function [fuzzy]=my_FCM(data,N)
+n=size(data,1);
+U=zeros(n,N);
+rk=randperm(n);
+NN=rk(1:N);
+M=data(NN,:);%%初始化聚类中心
+label=zeros(n,1);
+e=0.0000001;
+while 1
+oldM=M;
+Dist=(pdist2(data,M,'Euclidean')+e).^2;
+udist=1./Dist;
+for i=1:N
+U(:,i)=udist(:,i)./((sum(udist')'+e));%%%%隶属度函数
+end
+fuzzy=U;
+[~,label]=max(U,[],2);
+for i=1:n
+D(i,:)=(U(i,label(i)).^2)*data(i,:);
+end
+for i=1:n
+UU(i,:)=(U(i,label(i)).^2);
+end
+for i=1:N
+id=find(label==i);
+M(i,:)=mean(D(id,:)./UU(id));
+end
+if abs(norm(M-oldM))<0.1
+    break
+end
+end
